@@ -1,12 +1,8 @@
 package com.example.lawrenjuip.imageapp.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.database.Cursor;
 import android.graphics.drawable.Drawable;;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,17 +15,14 @@ import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>{
     private List<Image> imageList;
-    private List<String> phoneGalleryImageList;
     private Context context;
     private Drawable placeholderImage;
 
     public ImageAdapter(List<Image> images, Context context){
-        phoneGalleryImageList.addAll(getAllShownImagesPath());
         imageList = images;
         this.context = context;
     }
@@ -107,25 +100,4 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>
     }
 
     public boolean isEmpty(){ return getItemCount() == 0; }
-
-    private List<String> getAllShownImagesPath(){
-        Uri uri;
-        Cursor cursor;
-        int column_index_data;
-        List<String> listOfAllImagesPaths = new ArrayList<>();
-        String absolutePathOfImage;
-
-        uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-
-        String[] projection = {MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME };
-        cursor = context.getContentResolver().query(uri, projection, null, null, null);
-        column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-
-        while(cursor.moveToNext()){
-            absolutePathOfImage = cursor.getString(column_index_data);
-            listOfAllImagesPaths.add(absolutePathOfImage);
-        }
-
-        return listOfAllImagesPaths;
-    }
 }
