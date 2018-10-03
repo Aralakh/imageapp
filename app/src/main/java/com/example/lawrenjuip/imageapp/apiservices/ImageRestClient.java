@@ -8,13 +8,13 @@ import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
-
 import retrofit2.http.Path;
 
 interface ImageRestClient {
     @POST("image/{image}/")
-    Call<Image> uploadImage(@Body RequestBody file);
+    Call<Image> uploadImage(@Header("Authorization") String auth, @Body RequestBody file);
 
     @DELETE("image/{imageDeleteHash")
     Response deleteImage(@Path("imageDeleteHash") String imageDeleteHash);

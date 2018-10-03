@@ -9,15 +9,13 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
-import static com.example.lawrenjuip.imageapp.utils.Constants.CLIENT_ID;
+import retrofit2.converter.moshi.MoshiConverterFactory;
 
 public class ImgurService {
     private static OkHttpClient.Builder okHttpClient;
     private static Retrofit.Builder builder= new Retrofit.Builder()
             .baseUrl(Constants.API_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create());
+            .addConverterFactory(MoshiConverterFactory.create());
 
     private static Retrofit retrofit = builder.build();
 
@@ -28,7 +26,6 @@ public class ImgurService {
             public Response intercept(Chain chain) throws IOException {
                 Request originalRequest = chain.request();
                 Request newRequest = originalRequest.newBuilder()
-                        .header("Authorization", CLIENT_ID)
                         .build();
                 return chain.proceed(newRequest);
             }

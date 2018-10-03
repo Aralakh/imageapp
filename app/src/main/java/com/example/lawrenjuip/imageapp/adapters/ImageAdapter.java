@@ -57,7 +57,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>
         placeholderImage = createPlaceHolder();
 
         Picasso.get()
-                .load(image.getLink())
+                .load(image.data.getLink())
                 .error(R.drawable.ic_image_error)
                 .placeholder(placeholderImage)
                 .into(imageHolder.imageView);
@@ -72,7 +72,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>
         Drawable drawable = null;
 
         try{
-            inputStream = assetManager.open("placeholder.png");
+            inputStream = assetManager.open("portrait_placeholder.png");
             drawable = Drawable.createFromStream(inputStream, null);
         }catch(IOException ioe){
             ioe.printStackTrace();
