@@ -24,7 +24,6 @@ import com.squareup.moshi.Types;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,10 +34,10 @@ import java.util.List;
 public class GalleryFragment extends Fragment {
     private RecyclerView imageRecyclerView;
     private GridLayoutManager imageGridLayoutManager;
-    private List<Image> imageList = new ArrayList<>();
     private ImageAdapter imageAdapter;
+    private static final String SHARED_PREFERENCES_KEY = "savedImages";
 
-    //Update the adapter to handle SavedImages rather than Images; there  should be no need to save a list here to operate on. Picasso should operate off the URL.
+    //Update the adapter to handle SavedImages rather than Images; there should be no need to save a list here to operate on. Picasso should operate off the URL.
     public static GalleryFragment newInstance() {
         return new GalleryFragment();
     }
@@ -64,8 +63,10 @@ public class GalleryFragment extends Fragment {
                     Moshi moshi = new Moshi.Builder().build();
                     Type listOfSavedImages = Types.newParameterizedType(List.class, SavedImage.class);
                     JsonAdapter<List<SavedImage>> savedImageJsonAdapter = moshi.adapter(listOfSavedImages);
-                    if (preferences.contains("savedImages")){
-                        String json = preferences.getString("savedImages", null);
+
+                    //get any existing saved images
+                    if (preferences.contains(SHARED_PREFERENCES_KEY)){
+                        String json = preferences.getString(SHARED_PREFERENCES_KEY, null);
                         try {
                             savedImageList = savedImageJsonAdapter.fromJson(json);
                         } catch (IOException ioe) {
@@ -75,12 +76,12 @@ public class GalleryFragment extends Fragment {
 
                     savedImageList.add(image);
                     String json = savedImageJsonAdapter.toJson(savedImageList);
-                    preferences.edit().putString("savedImages", json).apply();
+                    preferences.edit().putString(SHARED_PREFERENCES_KEY, json).apply();
                 }
 
                 @Override
                 public void onError() {
-                    Log.d("Error ", "something went wrong");
+                    Log.d("OnResponse error ", "something went wrong");
 
                 }
             }, imageFile);
