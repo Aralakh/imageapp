@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.lawrenjuip.imageapp.R;
-import com.example.lawrenjuip.imageapp.models.Image;
+import com.example.lawrenjuip.imageapp.models.SavedImage;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -18,11 +18,11 @@ import java.io.InputStream;
 import java.util.List;
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>{
-    private List<Image> imageList;
+    private List<SavedImage> imageList;
     private Context context;
     private Drawable placeholderImage;
 
-    public ImageAdapter(List<Image> images, Context context){
+    public ImageAdapter(List<SavedImage> images, Context context){
         imageList = images;
         this.context = context;
     }
@@ -53,11 +53,11 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>
 
     @Override
     public void onBindViewHolder(ImageHolder imageHolder, int position){
-        Image image = imageList.get(position);
+        SavedImage image = imageList.get(position);
         placeholderImage = createPlaceHolder();
 
         Picasso.get()
-                .load(image.data.getLink())
+                .load(image.getImageUrl())
                 .error(R.drawable.ic_image_error)
                 .placeholder(placeholderImage)
                 .into(imageHolder.imageView);
@@ -89,12 +89,11 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>
         return drawable;
     }
 
-    public void add(Image image){
-        imageList.add(image);
-        notifyItemInserted(imageList.size() - 1);
+    public void addAll(List<SavedImage> imageList){
+        this.imageList = imageList;
     }
 
-    public void remove(Image image){
+    public void remove(SavedImage image){
         imageList.remove(image);
         notifyDataSetChanged();
     }

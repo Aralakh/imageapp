@@ -8,4 +8,12 @@ public class SavedImage {
         this.deleteHash = deleteHash;
         this.imageUrl = imageUrl;
     }
+
+    public String getDeleteHash() {
+        return deleteHash;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
 }
