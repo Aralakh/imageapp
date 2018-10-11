@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.lawrenjuip.imageapp.R;
+import com.example.lawrenjuip.imageapp.activities.MainActivity;
 import com.example.lawrenjuip.imageapp.adapters.ImageAdapter;
 import com.example.lawrenjuip.imageapp.apiservices.ImageApi;
 import com.example.lawrenjuip.imageapp.apiservices.RestCallback;
@@ -127,7 +128,7 @@ public class GalleryFragment extends Fragment {
 
     private void updateAdapter(List<SavedImage> imageList){
         if(imageAdapter == null){
-            imageAdapter = new ImageAdapter(imageList, getContext());
+            imageAdapter = new ImageAdapter(imageList, getContext(),(ImageAdapter.OnImageClickListener) getActivity());
             imageRecyclerView.setAdapter(imageAdapter);
         }else{
             imageAdapter = (ImageAdapter) imageRecyclerView.getAdapter();

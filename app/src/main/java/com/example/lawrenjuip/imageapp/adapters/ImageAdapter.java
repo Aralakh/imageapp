@@ -21,13 +21,15 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>
     private List<SavedImage> imageList;
     private Context context;
     private Drawable placeholderImage;
+    private OnImageClickListener listener;
 
-    public ImageAdapter(List<SavedImage> images, Context context){
+    public ImageAdapter(List<SavedImage> images, Context context, OnImageClickListener imageClickListener){
+        listener = imageClickListener;
         imageList = images;
         this.context = context;
     }
 
-    public class ImageHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ImageHolder extends RecyclerView.ViewHolder {
         public final View view;
         public ImageView imageView;
 
@@ -35,12 +37,6 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>
             super(itemView);
             view = itemView;
             imageView = view.findViewById(R.id.image_item_view);
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View itemView){
-            //launch the detailed image view activity/fragment
         }
     }
 
@@ -53,7 +49,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>
 
     @Override
     public void onBindViewHolder(ImageHolder imageHolder, int position){
-        SavedImage image = imageList.get(position);
+        final SavedImage image = imageList.get(position);
         placeholderImage = createPlaceHolder();
 
         Picasso.get()
@@ -61,6 +57,13 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>
                 .error(R.drawable.ic_image_error)
                 .placeholder(placeholderImage)
                 .into(imageHolder.imageView);
+
+        imageHolder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onImageClick(image);
+            }
+        });
     }
 
     @Override
@@ -99,4 +102,8 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>
     }
 
     public boolean isEmpty(){ return getItemCount() == 0; }
+
+    public interface  OnImageClickListener {
+        public void onImageClick(SavedImage image);
+    }
 }
