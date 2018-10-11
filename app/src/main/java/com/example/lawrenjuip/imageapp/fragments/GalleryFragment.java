@@ -97,8 +97,9 @@ public class GalleryFragment extends Fragment {
             return;
         }
         if(requestCode == REQUEST_TAKE_PICTURE){
-            Uri uri = FileProvider.getUriForFile(getActivity(), "com.bignerdranch.android.criminalintent.fileprovider", cameraFile);
-
+            Uri uri = FileProvider.getUriForFile(getActivity(), "com.example.lawrenjuip.imageapp.fileprovider", cameraFile);
+            uploadImage(cameraFile);
+            //should we delete the file after it's uploaded, to clear space? add to trello backlog
             getActivity().revokeUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         }
     }
@@ -137,14 +138,16 @@ public class GalleryFragment extends Fragment {
     }
 
     //update this function to take an argument/work with the camera operation
-    private void uploadImage(){
+    private void uploadImage(File file){
         AssetManager assetManager = getContext().getAssets();
         InputStream is = null;
         try {
-            is = assetManager.open("cat_placeholder.jpg");
-            createImageFileFromAssets(is);
-            File imageFile = new File(getContext().getFilesDir(), "catPlaceholderImage.png");
-
+            File imageFile = file;
+            if(file == null || !file.exists()) {
+                is = assetManager.open("cat_placeholder.jpg");
+                createImageFileFromAssets(is);
+                imageFile = new File(getContext().getFilesDir(), "catPlaceholderImage.png");
+            }
             ImageApi imageApi = new ImageApi();
             imageApi.uploadImage(new RestCallback<Image>() {
                 @Override
@@ -175,12 +178,11 @@ public class GalleryFragment extends Fragment {
     }
 
     private void takePicture(){
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, getContext().getFilesDir());
-        String filename = "new_file" + imageAdapter.getItemCount();
+        final Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        String filename = "camera_image_" + System.currentTimeMillis();
         cameraFile = new File(getContext().getFilesDir(), filename);
         Uri uri = FileProvider.getUriForFile(getActivity(), "com.example.lawrenjuip.imageapp.fileprovider", cameraFile);
-
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         List<ResolveInfo> cameraActivities = getActivity().getPackageManager().queryIntentActivities(cameraIntent, PackageManager.MATCH_DEFAULT_ONLY);
         for(ResolveInfo activity : cameraActivities){
             getActivity().grantUriPermission(activity.activityInfo.packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
