@@ -1,14 +1,25 @@
 package com.example.lawrenjuip.imageapp.fragments;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.AssetManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -18,7 +29,6 @@ import com.example.lawrenjuip.imageapp.apiservices.ImageApi;
 import com.example.lawrenjuip.imageapp.apiservices.RestCallback;
 import com.example.lawrenjuip.imageapp.models.Image;
 import com.example.lawrenjuip.imageapp.models.SavedImage;
-import com.squareup.moshi.Json;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
@@ -36,7 +46,9 @@ public class GalleryFragment extends Fragment {
     private RecyclerView imageRecyclerView;
     private GridLayoutManager imageGridLayoutManager;
     private ImageAdapter imageAdapter;
+    private File cameraFile;
     private static final String SHARED_PREFERENCES_KEY = "savedImages";
+    private static final int REQUEST_TAKE_PICTURE = 1;
 
     //Update the adapter to handle SavedImages rather than Images; there should be no need to save a list here to operate on. Picasso should operate off the URL.
     public static GalleryFragment newInstance() {
@@ -46,6 +58,7 @@ public class GalleryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -61,6 +74,34 @@ public class GalleryFragment extends Fragment {
         return galleryView;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_camera, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch(item.getItemId()){
+            case R.id.camera:
+                //launch camera, take picture!
+                takePicture();
+            return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override public void onActivityResult(int requestCode, int resultCode, Intent data){
+        if(resultCode != Activity.RESULT_OK){
+            return;
+        }
+        if(requestCode == REQUEST_TAKE_PICTURE){
+            Uri uri = FileProvider.getUriForFile(getActivity(), "com.bignerdranch.android.criminalintent.fileprovider", cameraFile);
+
+            getActivity().revokeUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        }
+    }
 
     private List<SavedImage> loadExistingImages(SharedPreferences preferences){
         List<SavedImage> savedImageList = new ArrayList<>();
@@ -131,6 +172,22 @@ public class GalleryFragment extends Fragment {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
+    }
+
+    private void takePicture(){
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, getContext().getFilesDir());
+        String filename = "new_file" + imageAdapter.getItemCount();
+        cameraFile = new File(getContext().getFilesDir(), filename);
+        Uri uri = FileProvider.getUriForFile(getActivity(), "com.example.lawrenjuip.imageapp.fileprovider", cameraFile);
+
+        List<ResolveInfo> cameraActivities = getActivity().getPackageManager().queryIntentActivities(cameraIntent, PackageManager.MATCH_DEFAULT_ONLY);
+        for(ResolveInfo activity : cameraActivities){
+            getActivity().grantUriPermission(activity.activityInfo.packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        }
+
+        startActivityForResult(cameraIntent, REQUEST_TAKE_PICTURE);
+
     }
 
     private JsonAdapter<List<SavedImage>> getJsonAdapter(){
