@@ -9,7 +9,6 @@ import android.content.pm.ResolveInfo;
 import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
@@ -24,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.lawrenjuip.imageapp.R;
-import com.example.lawrenjuip.imageapp.activities.MainActivity;
 import com.example.lawrenjuip.imageapp.adapters.ImageAdapter;
 import com.example.lawrenjuip.imageapp.apiservices.ImageApi;
 import com.example.lawrenjuip.imageapp.apiservices.RestCallback;
@@ -43,15 +41,15 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.lawrenjuip.imageapp.utils.Constants.SHARED_PREFERENCES_KEY;
+
 public class GalleryFragment extends Fragment {
     private RecyclerView imageRecyclerView;
     private GridLayoutManager imageGridLayoutManager;
     private ImageAdapter imageAdapter;
     private File cameraFile;
-    private static final String SHARED_PREFERENCES_KEY = "savedImages";
     private static final int REQUEST_TAKE_PICTURE = 1;
 
-    //Update the adapter to handle SavedImages rather than Images; there should be no need to save a list here to operate on. Picasso should operate off the URL.
     public static GalleryFragment newInstance() {
         return new GalleryFragment();
     }
@@ -71,7 +69,9 @@ public class GalleryFragment extends Fragment {
         imageRecyclerView.setLayoutManager(imageGridLayoutManager);
 
         SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-        loadExistingImages(preferences);
+        updateAdapter(loadExistingImages(preferences));
+        imageRecyclerView.setAdapter(imageAdapter);
+        imageRecyclerView.getAdapter().notifyDataSetChanged();
         return galleryView;
     }
 
@@ -121,21 +121,15 @@ public class GalleryFragment extends Fragment {
             }
         }
 
-        updateAdapter(savedImageList);
-
         return savedImageList;
     }
 
     private void updateAdapter(List<SavedImage> imageList){
         if(imageAdapter == null){
             imageAdapter = new ImageAdapter(imageList, getContext(),(ImageAdapter.OnImageClickListener) getActivity());
-            imageRecyclerView.setAdapter(imageAdapter);
         }else{
-            imageAdapter = (ImageAdapter) imageRecyclerView.getAdapter();
             imageAdapter.addAll(imageList);
         }
-
-        imageRecyclerView.getAdapter().notifyDataSetChanged();
     }
 
     //update this function to take an argument/work with the camera operation

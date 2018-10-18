@@ -3,6 +3,7 @@ package com.example.lawrenjuip.imageapp.activities;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.lawrenjuip.imageapp.R;
@@ -28,10 +29,28 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.OnIm
     }
 
     @Override
+    public void onBackPressed() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.getBackStackEntryCount() > 0) {
+            fragmentManager.popBackStack();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     public void onImageClick(SavedImage image) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment fragment = new SingleImageFragment();
-        //hitting back should return to the gallery, not close
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+        if(image.getDeleteHash() == null){
+            image.setDeleteHash("");
+        }
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("saved_image", image);
+        Fragment fragment = SingleImageFragment.newInstance();
+        fragment.setArguments(bundle);
+
+        transaction.replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
     }
 }
