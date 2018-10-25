@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.example.lawrenjuip.imageapp.adapters.ImageAdapter;
 import com.example.lawrenjuip.imageapp.models.SavedImage;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;

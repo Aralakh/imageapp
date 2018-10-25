@@ -104,6 +104,6 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>
     public boolean isEmpty(){ return getItemCount() == 0; }
 
     public interface  OnImageClickListener {
-        public void onImageClick(SavedImage image);
+        void onImageClick(SavedImage image);
     }
 }

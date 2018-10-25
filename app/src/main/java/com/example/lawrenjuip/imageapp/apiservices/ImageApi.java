@@ -20,7 +20,7 @@ public class ImageApi {
 
     public void deleteImage(final RestCallback<ResponseBody> callback, String deleteImageHash){
         try{
-            imageRestClient.deleteImage("Client-ID" + CLIENT_ID, deleteImageHash).enqueue(new Callback<ResponseBody>() {
+            imageRestClient.deleteImage("Client-ID " + CLIENT_ID, deleteImageHash).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if(response.isSuccessful()){

@@ -29,19 +29,11 @@ import com.example.lawrenjuip.imageapp.apiservices.RestCallback;
 import com.example.lawrenjuip.imageapp.models.Image;
 import com.example.lawrenjuip.imageapp.models.SavedImage;
 import com.example.lawrenjuip.imageapp.utils.FileUtils;
-import com.squareup.moshi.JsonAdapter;
-import com.squareup.moshi.Moshi;
-import com.squareup.moshi.Types;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Type;
 import java.util.List;
-
-import static com.example.lawrenjuip.imageapp.utils.Constants.SHARED_PREFERENCES_KEY;
 
 public class GalleryFragment extends Fragment {
     private RecyclerView imageRecyclerView;

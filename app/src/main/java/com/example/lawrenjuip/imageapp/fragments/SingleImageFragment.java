@@ -82,15 +82,19 @@ public class SingleImageFragment extends Fragment {
                 //maybe show a pop up dialog to let user know, add a cancel button to not save changes?
                 return true;
             case R.id.delete:
-                //delete image, change behavior of submit button to delete.
-                //same as above
+
+                //add a confirmation dialogS
                 ImageApi imageApi = new ImageApi();
                 imageApi.deleteImage(new RestCallback<ResponseBody>() {
                     @Override
                     public void onResponse(ResponseBody response) {
                         SharedPreferences preferences = getActivity().getPreferences(getContext().MODE_PRIVATE);
                         List<SavedImage> saveImagesList =  FileUtils.loadExistingImages(preferences);
-                        saveImagesList.remove(savedImage);
+                        for(SavedImage image: saveImagesList){
+                            if(savedImage.equals(image)){
+                                saveImagesList.remove(image);
+                            }
+                        }
                         FileUtils.saveImages(saveImagesList, preferences);
                         getActivity().getSupportFragmentManager().popBackStack();
                     }

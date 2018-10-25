@@ -3,6 +3,8 @@ package com.example.lawrenjuip.imageapp.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Objects;
+
 public class SavedImage implements Parcelable {
     String deleteHash;
     String imageUrl;
@@ -33,6 +35,21 @@ public class SavedImage implements Parcelable {
         return imageUrl;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SavedImage that = (SavedImage) o;
+        return Objects.equals(deleteHash, that.deleteHash) &&
+                Objects.equals(imageUrl, that.imageUrl);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(deleteHash, imageUrl);
+    }
+
     //Parcelable
 
     @Override
@@ -59,5 +76,4 @@ public class SavedImage implements Parcelable {
         dest.writeString(this.deleteHash);
         dest.writeString(this.imageUrl);
     }
-
 }
