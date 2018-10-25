@@ -1,11 +1,13 @@
 package com.example.lawrenjuip.imageapp.fragments;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -82,28 +84,7 @@ public class SingleImageFragment extends Fragment {
                 //maybe show a pop up dialog to let user know, add a cancel button to not save changes?
                 return true;
             case R.id.delete:
-
-                //add a confirmation dialogS
-                ImageApi imageApi = new ImageApi();
-                imageApi.deleteImage(new RestCallback<ResponseBody>() {
-                    @Override
-                    public void onResponse(ResponseBody response) {
-                        SharedPreferences preferences = getActivity().getPreferences(getContext().MODE_PRIVATE);
-                        List<SavedImage> saveImagesList =  FileUtils.loadExistingImages(preferences);
-                        for(SavedImage image: saveImagesList){
-                            if(savedImage.equals(image)){
-                                saveImagesList.remove(image);
-                            }
-                        }
-                        FileUtils.saveImages(saveImagesList, preferences);
-                        getActivity().getSupportFragmentManager().popBackStack();
-                    }
-
-                    @Override
-                    public void onError() {
-                        //let them know it failed
-                    }
-                }, savedImage.getDeleteHash());
+                showDeleteConfirmationDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -133,4 +114,46 @@ public class SingleImageFragment extends Fragment {
         return drawable;
     }
 
+    private void deleteImage(){
+        ImageApi imageApi = new ImageApi();
+        imageApi.deleteImage(new RestCallback<ResponseBody>() {
+            @Override
+            public void onResponse(ResponseBody response) {
+                SharedPreferences preferences = getActivity().getPreferences(getContext().MODE_PRIVATE);
+                List<SavedImage> saveImagesList =  FileUtils.loadExistingImages(preferences);
+                for(SavedImage image: saveImagesList){
+                    if(savedImage.equals(image)){
+                        saveImagesList.remove(image);
+                    }
+                }
+                FileUtils.saveImages(saveImagesList, preferences);
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+
+            @Override
+            public void onError() {
+                //let them know it failed
+            }
+        }, savedImage.getDeleteHash());
+    }
+
+    private void showDeleteConfirmationDialog(){
+        AlertDialog.Builder deleteBuilder = new AlertDialog.Builder(getContext());
+        deleteBuilder.setTitle("Delete image")
+                .setMessage("Are you sure you want to do this? It cannot be undone!")
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteImage();
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        AlertDialog deleteDialog = deleteBuilder.create();
+        deleteDialog.show();
+    }
 }
