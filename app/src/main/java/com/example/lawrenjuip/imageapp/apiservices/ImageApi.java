@@ -8,6 +8,7 @@ import java.io.File;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -17,12 +18,43 @@ import static com.example.lawrenjuip.imageapp.utils.Constants.CLIENT_ID;
 public class ImageApi {
     ImageRestClient imageRestClient = ImgurService.getRetrofit(ImageRestClient.class);
 
-    public void deleteImage(RestCallback<String> callback, String deleteImageHash){
+    public void deleteImage(final RestCallback<ResponseBody> callback, String deleteImageHash){
         try{
-            Response response = imageRestClient.deleteImage(deleteImageHash);
-            callback.onResponse(response.toString());
+            imageRestClient.deleteImage("Client-ID" + CLIENT_ID, deleteImageHash).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if(response.isSuccessful()){
+                        callback.onResponse(response.body());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    callback.onError();
+                    t.printStackTrace();
+                }
+            });
         }catch(Exception e){
-            callback.onError();
+            Log.d("deleteImage ", e.getMessage());
+        }
+    }
+
+    public void updateImage(final RestCallback<Response> callback, String deleteImageHash){
+        try{
+//            imageRestClient.updateImage("Client-ID" + CLIENT_ID, deleteImageHash).enqueue(new Callback<Response>() {
+//                @Override
+//                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                    callback.onResponse(response.body());
+//                }
+//
+//                @Override
+//                public void onFailure(Call<ResponseBody> call, Throwable t) {
+//                    callback.onError();
+//                    t.printStackTrace();
+//                }
+//            });
+        }catch(Exception e){
+            Log.d("updateImage ", e.getMessage());
         }
     }
 

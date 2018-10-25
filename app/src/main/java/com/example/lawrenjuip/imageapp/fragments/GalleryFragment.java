@@ -28,6 +28,7 @@ import com.example.lawrenjuip.imageapp.apiservices.ImageApi;
 import com.example.lawrenjuip.imageapp.apiservices.RestCallback;
 import com.example.lawrenjuip.imageapp.models.Image;
 import com.example.lawrenjuip.imageapp.models.SavedImage;
+import com.example.lawrenjuip.imageapp.utils.FileUtils;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
@@ -38,7 +39,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.lawrenjuip.imageapp.utils.Constants.SHARED_PREFERENCES_KEY;
@@ -69,7 +69,7 @@ public class GalleryFragment extends Fragment {
         imageRecyclerView.setLayoutManager(imageGridLayoutManager);
 
         SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-        updateAdapter(loadExistingImages(preferences));
+        updateAdapter(FileUtils.loadExistingImages(preferences));
         imageRecyclerView.setAdapter(imageAdapter);
         imageRecyclerView.getAdapter().notifyDataSetChanged();
         return galleryView;
@@ -93,6 +93,13 @@ public class GalleryFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        updateAdapter(FileUtils.loadExistingImages(preferences));
+    }
+
     @Override public void onActivityResult(int requestCode, int resultCode, Intent data){
         if(resultCode != Activity.RESULT_OK){
             return;
@@ -105,25 +112,6 @@ public class GalleryFragment extends Fragment {
         }
     }
 
-    private List<SavedImage> loadExistingImages(SharedPreferences preferences){
-        List<SavedImage> savedImageList = new ArrayList<>();
-        Moshi moshi = new Moshi.Builder().build();
-        Type listOfSavedImages = Types.newParameterizedType(List.class, SavedImage.class);
-        JsonAdapter<List<SavedImage>> savedImageJsonAdapter = moshi.adapter(listOfSavedImages);
-
-        //get any existing saved images
-        if (preferences.contains(SHARED_PREFERENCES_KEY)){
-            String json = preferences.getString(SHARED_PREFERENCES_KEY, null);
-            try {
-                savedImageList = savedImageJsonAdapter.fromJson(json);
-            } catch (IOException ioe) {
-                Log.d("Loading images ", ioe.getMessage());
-            }
-        }
-
-        return savedImageList;
-    }
-
     private void updateAdapter(List<SavedImage> imageList){
         if(imageAdapter == null){
             imageAdapter = new ImageAdapter(imageList, getContext(),(ImageAdapter.OnImageClickListener) getActivity());
@@ -132,15 +120,14 @@ public class GalleryFragment extends Fragment {
         }
     }
 
-    //update this function to take an argument/work with the camera operation
     private void uploadImage(File file){
         AssetManager assetManager = getContext().getAssets();
-        InputStream is = null;
+        InputStream is;
         try {
             File imageFile = file;
             if(file == null || !file.exists()) {
                 is = assetManager.open("cat_placeholder.jpg");
-                createImageFileFromAssets(is);
+                FileUtils.createImageFileFromAssets(is, getContext());
                 imageFile = new File(getContext().getFilesDir(), "catPlaceholderImage.png");
             }
             ImageApi imageApi = new ImageApi();
@@ -150,15 +137,11 @@ public class GalleryFragment extends Fragment {
                     //save response
                     SavedImage image = new SavedImage(response.data.getDeleteHash(), response.data.getLink());
                     SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-                    List<SavedImage> savedImageList = loadExistingImages(preferences);
+                    List<SavedImage> savedImageList = FileUtils.loadExistingImages(preferences);
 
                     savedImageList.add(image);
-
+                    FileUtils.saveImages(savedImageList, preferences);
                     updateAdapter(savedImageList);
-
-                    JsonAdapter<List<SavedImage>> savedImageJsonAdapter = getJsonAdapter();
-                    String json = savedImageJsonAdapter.toJson(savedImageList);
-                    preferences.edit().putString(SHARED_PREFERENCES_KEY, json).apply();
                 }
 
                 @Override
@@ -185,30 +168,5 @@ public class GalleryFragment extends Fragment {
 
         startActivityForResult(cameraIntent, REQUEST_TAKE_PICTURE);
 
-    }
-
-    private JsonAdapter<List<SavedImage>> getJsonAdapter(){
-        Moshi moshi = new Moshi.Builder().build();
-        Type listOfSavedImages = Types.newParameterizedType(List.class, SavedImage.class);
-        return moshi.adapter(listOfSavedImages);
-    }
-
-    private void createImageFileFromAssets(InputStream inputStream) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        try {
-            byte[] buffer = new byte[1024];
-            int size = 0;
-            while ((size = inputStream.read(buffer)) >= 0) {
-                byteArrayOutputStream.write(buffer, 0, size);
-            }
-            inputStream.close();
-
-            FileOutputStream fileOutputStream = getContext().openFileOutput("catPlaceholderImage.png", Context.MODE_PRIVATE);
-            buffer = byteArrayOutputStream.toByteArray();
-            fileOutputStream.write(buffer);
-            fileOutputStream.close();
-        } catch (Exception e) {
-            Log.d("write to file ", e.getMessage());
-        }
     }
 }

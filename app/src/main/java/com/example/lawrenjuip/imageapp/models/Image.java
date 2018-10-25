@@ -9,7 +9,7 @@ public class Image {
         String id;
         String title;
         String description;
-        String deleteHash;
+        String deletehash;
         String link;
 
         public String getId() {
@@ -37,11 +37,11 @@ public class Image {
         }
 
         public String getDeleteHash() {
-            return deleteHash;
+            return deletehash;
         }
 
         public void setDeleteHash(String deleteHash) {
-            this.deleteHash = deleteHash;
+            this.deletehash = deleteHash;
         }
 
         public String getLink() {

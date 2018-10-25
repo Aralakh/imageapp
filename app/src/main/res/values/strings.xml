@@ -4,4 +4,6 @@
     <string name="name">Name</string>
     <string name="description">Image Description</string>
     <string name="submit">Submit</string>
+    <string name="edit_picture_details">Edit image details</string>
+    <string name="delete_image">Delete image</string>
 </resources>
