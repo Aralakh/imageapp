@@ -17,7 +17,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.lawrenjuip.imageapp.utils.Constants.SHARED_PREFERENCES_KEY;
+import static com.example.lawrenjuip.imageapp.utils.Constants.SAVED_IMAGES_KEY;
 
 public final class FileUtils {
 
@@ -28,8 +28,8 @@ public final class FileUtils {
         JsonAdapter<List<SavedImage>> savedImageJsonAdapter = moshi.adapter(listOfSavedImages);
 
         //get any existing saved images
-        if (preferences.contains(SHARED_PREFERENCES_KEY)){
-            String json = preferences.getString(SHARED_PREFERENCES_KEY, null);
+        if (preferences.contains(SAVED_IMAGES_KEY)){
+            String json = preferences.getString(SAVED_IMAGES_KEY, null);
             try {
                 savedImageList = savedImageJsonAdapter.fromJson(json);
             } catch (IOException ioe) {
@@ -62,7 +62,7 @@ public final class FileUtils {
     public static List<SavedImage> saveImages(List<SavedImage> imageList, SharedPreferences preferences){
         JsonAdapter<List<SavedImage>> savedImageJsonAdapter = getJsonAdapter();
         String json = savedImageJsonAdapter.toJson(imageList);
-        preferences.edit().putString(SHARED_PREFERENCES_KEY, json).apply();
+        preferences.edit().putString(SAVED_IMAGES_KEY, json).apply();
         return imageList;
     }
 

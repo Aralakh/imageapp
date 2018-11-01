@@ -8,7 +8,6 @@ public class Image {
     public static class UploadedImage {
         String id;
         String title;
-        String description;
         String deletehash;
         String link;
 
@@ -26,14 +25,6 @@ public class Image {
 
         public void setTitle(String title) {
             this.title = title;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
         }
 
         public String getDeleteHash() {

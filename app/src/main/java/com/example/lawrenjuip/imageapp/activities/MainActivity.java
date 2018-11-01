@@ -43,13 +43,7 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.OnIm
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        if(image.getDeleteHash() == null){
-            image.setDeleteHash("");
-        }
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("saved_image", image);
-        Fragment fragment = SingleImageFragment.newInstance();
-        fragment.setArguments(bundle);
+        Fragment fragment = SingleImageFragment.newInstance(image);
 
         transaction.replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
     }

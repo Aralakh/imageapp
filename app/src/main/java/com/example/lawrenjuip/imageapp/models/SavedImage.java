@@ -8,10 +8,20 @@ import java.util.Objects;
 public class SavedImage implements Parcelable {
     String deleteHash;
     String imageUrl;
+    String title;
 
     public SavedImage(String deleteHash, String imageUrl) {
         this.deleteHash = deleteHash;
         this.imageUrl = imageUrl;
+        this.title = "";
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getDeleteHash() {
@@ -60,6 +70,7 @@ public class SavedImage implements Parcelable {
     public SavedImage(Parcel source){
         deleteHash = source.readString();
         imageUrl = source.readString();
+        title = source.readString();
     }
 
     public static final Parcelable.Creator<SavedImage> CREATOR = new Parcelable.Creator<SavedImage>(){
@@ -75,5 +86,6 @@ public class SavedImage implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.deleteHash);
         dest.writeString(this.imageUrl);
+        dest.writeString(this.title);
     }
 }

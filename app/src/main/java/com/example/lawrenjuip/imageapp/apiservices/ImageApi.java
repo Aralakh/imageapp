@@ -39,20 +39,23 @@ public class ImageApi {
         }
     }
 
-    public void updateImage(final RestCallback<Response> callback, String deleteImageHash){
+    public void updateImage(final RestCallback<ResponseBody> callback, String deleteImageHash, String title){
         try{
-//            imageRestClient.updateImage("Client-ID" + CLIENT_ID, deleteImageHash).enqueue(new Callback<Response>() {
-//                @Override
-//                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-//                    callback.onResponse(response.body());
-//                }
-//
-//                @Override
-//                public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                    callback.onError();
-//                    t.printStackTrace();
-//                }
-//            });
+            RequestBody requestBody = RequestBody.create(MediaType.parse("text/plain"), title);
+            imageRestClient.updateImage("Client-ID " + CLIENT_ID, deleteImageHash, requestBody).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if(response.isSuccessful()){
+                        callback.onResponse(response.body());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    callback.onError();
+                    t.printStackTrace();
+                }
+            });
         }catch(Exception e){
             Log.d("updateImage ", e.getMessage());
         }

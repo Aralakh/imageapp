@@ -1,9 +1,12 @@
 <resources>
     <string name="app_name">ImageApp</string>
     <string name="take_a_picture">Take a picture</string>
-    <string name="name">Name</string>
+    <string name="name">Untitled</string>
     <string name="description">Image Description</string>
     <string name="submit">Submit</string>
     <string name="edit_picture_details">Edit image details</string>
     <string name="delete_image">Delete image</string>
+    <string name="cancel">Cancel</string>
+    <string name="update_successful">Image update successful</string>
+    <string name="delete_message">Are you sure you want to do this? It cannot be undone!</string>
 </resources>

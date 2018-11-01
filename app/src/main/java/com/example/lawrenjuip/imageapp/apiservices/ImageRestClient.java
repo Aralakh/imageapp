@@ -23,5 +23,5 @@ interface ImageRestClient {
     Call<Image> getImage(@Path("imageHash") String imageHash);
 
     @POST("image/{imageDeleteHash}")
-    Call<ResponseBody> updateImage(@Header("Authorization") String auth, @Path("imageDeleteHash") String imageDeleteHash);
+    Call<ResponseBody> updateImage(@Header("Authorization") String auth, @Path("imageDeleteHash") String imageDeleteHash, @Body RequestBody title);
 }

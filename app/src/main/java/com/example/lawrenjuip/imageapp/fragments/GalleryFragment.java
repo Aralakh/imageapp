@@ -77,7 +77,6 @@ public class GalleryFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item){
         switch(item.getItemId()){
             case R.id.camera:
-                //launch camera, take picture!
                 takePicture();
             return true;
             default:
