@@ -9,7 +9,9 @@ import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 interface ImageRestClient {
@@ -22,6 +24,7 @@ interface ImageRestClient {
     @GET("image/{imageHash}")
     Call<Image> getImage(@Path("imageHash") String imageHash);
 
+    @Multipart
     @POST("image/{imageDeleteHash}")
-    Call<ResponseBody> updateImage(@Header("Authorization") String auth, @Path("imageDeleteHash") String imageDeleteHash, @Body RequestBody title);
+    Call<ResponseBody> updateImage(@Header("Authorization") String auth, @Path("imageDeleteHash") String imageDeleteHash, @Part("title") RequestBody title);
 }
