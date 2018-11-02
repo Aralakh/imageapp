@@ -108,6 +108,7 @@ public class GalleryFragment extends Fragment {
             imageAdapter = new ImageAdapter(imageList, getContext(),(ImageAdapter.OnImageClickListener) getActivity());
         }else{
             imageAdapter.addAll(imageList);
+            imageAdapter.notifyDataSetChanged();
         }
     }
 
