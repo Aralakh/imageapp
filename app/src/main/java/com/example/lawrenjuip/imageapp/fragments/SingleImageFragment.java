@@ -23,7 +23,9 @@ import com.example.lawrenjuip.imageapp.R;
 import com.example.lawrenjuip.imageapp.apiservices.ImageApi;
 import com.example.lawrenjuip.imageapp.apiservices.RestCallback;
 import com.example.lawrenjuip.imageapp.models.SavedImage;
+import com.example.lawrenjuip.imageapp.presenters.SingleImagePresenter;
 import com.example.lawrenjuip.imageapp.utils.FileUtils;
+import com.example.lawrenjuip.imageapp.utils.SharedPrefsImageStorage;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -35,7 +37,7 @@ import okhttp3.ResponseBody;
 
 import static com.example.lawrenjuip.imageapp.utils.Constants.SAVED_IMAGES_KEY;
 
-public class SingleImageFragment extends Fragment {
+public class SingleImageFragment extends Fragment implements SingleImagePresenter.SingleImageView {
     private SavedImage savedImage;
     private Drawable placeholderImage;
     private TextView name;
@@ -43,6 +45,7 @@ public class SingleImageFragment extends Fragment {
     private Button submitButton;
     private Button cancelButton;
     private boolean isEditMode = false;
+    private SingleImagePresenter singleImagePresenter;
 
     public static SingleImageFragment newInstance(SavedImage image){
         SingleImageFragment fragment = new SingleImageFragment();
@@ -107,6 +110,8 @@ public class SingleImageFragment extends Fragment {
                 .placeholder(placeholderImage)
                 .into(imageView);
 
+        singleImagePresenter = new SingleImagePresenter(this);
+
         return view;
     }
 
@@ -169,26 +174,8 @@ public class SingleImageFragment extends Fragment {
     }
 
     private void deleteImage(){
-        ImageApi imageApi = new ImageApi();
-        imageApi.deleteImage(new RestCallback<ResponseBody>() {
-            @Override
-            public void onResponse(ResponseBody response) {
-                SharedPreferences preferences = getActivity().getPreferences(getContext().MODE_PRIVATE);
-                List<SavedImage> saveImagesList =  FileUtils.loadExistingImages(preferences);
-                for(SavedImage image: saveImagesList){
-                    if(savedImage.equals(image)){
-                        saveImagesList.remove(image);
-                    }
-                }
-                FileUtils.saveImages(saveImagesList, preferences);
-                getActivity().getSupportFragmentManager().popBackStack();
-            }
-
-            @Override
-            public void onError() {
-                //let them know it failed
-            }
-        }, savedImage.getDeleteHash());
+        SharedPrefsImageStorage prefsImageStorage = new SharedPrefsImageStorage(getActivity());
+        singleImagePresenter.deleteImage(savedImage, prefsImageStorage);
     }
 
     private void updateImage(){
@@ -235,5 +222,10 @@ public class SingleImageFragment extends Fragment {
                 });
         AlertDialog deleteDialog = deleteBuilder.create();
         deleteDialog.show();
+    }
+
+    @Override
+    public void goBackOneScreen() {
+        getActivity().getSupportFragmentManager().popBackStack();
     }
 }
