@@ -1,6 +1,6 @@
 package com.example.lawrenjuip.imageapp.presenters;
 
-import com.example.lawrenjuip.imageapp.apiservices.ImageApi;
+import com.example.lawrenjuip.imageapp.apiservices.ImgurImageApi;
 import com.example.lawrenjuip.imageapp.apiservices.RestCallback;
 import com.example.lawrenjuip.imageapp.models.SavedImage;
 
@@ -16,8 +16,7 @@ public class SingleImagePresenter {
         this.singleImageView = singleImageView;
     }
 
-    public void deleteImage(final SavedImage savedImage, final ImageStorage imageStorage){
-        ImageApi imageApi = new ImageApi();
+    public void deleteImage(final SavedImage savedImage, final ImageStorage imageStorage, ImageApi imageApi){
         imageApi.deleteImage(new RestCallback<ResponseBody>() {
             @Override
             public void onResponse(ResponseBody response) {
@@ -35,6 +34,7 @@ public class SingleImagePresenter {
             @Override
             public void onError() {
                 //let them know it failed
+                int debug = 6;
             }
         }, savedImage.getDeleteHash());
     }
@@ -46,5 +46,9 @@ public class SingleImagePresenter {
 
     public interface SingleImageView {
         public void goBackOneScreen();
+    }
+
+    public interface ImageApi {
+        void deleteImage(RestCallback<ResponseBody> callback, String deleteHash);
     }
 }

@@ -20,7 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.lawrenjuip.imageapp.R;
-import com.example.lawrenjuip.imageapp.apiservices.ImageApi;
+import com.example.lawrenjuip.imageapp.apiservices.ImgurImageApi;
 import com.example.lawrenjuip.imageapp.apiservices.RestCallback;
 import com.example.lawrenjuip.imageapp.models.SavedImage;
 import com.example.lawrenjuip.imageapp.presenters.SingleImagePresenter;
@@ -175,12 +175,12 @@ public class SingleImageFragment extends Fragment implements SingleImagePresente
 
     private void deleteImage(){
         SharedPrefsImageStorage prefsImageStorage = new SharedPrefsImageStorage(getActivity());
-        singleImagePresenter.deleteImage(savedImage, prefsImageStorage);
+        singleImagePresenter.deleteImage(savedImage, prefsImageStorage, new ImgurImageApi());
     }
 
     private void updateImage(){
-        ImageApi imageApi = new ImageApi();
-        imageApi.updateImage(new RestCallback<ResponseBody>() {
+        ImgurImageApi imgurImageApi = new ImgurImageApi();
+        imgurImageApi.updateImage(new RestCallback<ResponseBody>() {
             @Override
             public void onResponse(ResponseBody response) {
                 SharedPreferences preferences = getActivity().getPreferences(getContext().MODE_PRIVATE);

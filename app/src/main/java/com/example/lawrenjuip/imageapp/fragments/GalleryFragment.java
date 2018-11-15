@@ -24,7 +24,7 @@ import android.view.ViewGroup;
 
 import com.example.lawrenjuip.imageapp.R;
 import com.example.lawrenjuip.imageapp.adapters.ImageAdapter;
-import com.example.lawrenjuip.imageapp.apiservices.ImageApi;
+import com.example.lawrenjuip.imageapp.apiservices.ImgurImageApi;
 import com.example.lawrenjuip.imageapp.apiservices.RestCallback;
 import com.example.lawrenjuip.imageapp.models.Image;
 import com.example.lawrenjuip.imageapp.models.SavedImage;
@@ -122,8 +122,8 @@ public class GalleryFragment extends Fragment {
                 FileUtils.createImageFileFromAssets(is, getContext());
                 imageFile = new File(getContext().getFilesDir(), "catPlaceholderImage.png");
             }
-            ImageApi imageApi = new ImageApi();
-            imageApi.uploadImage(new RestCallback<Image>() {
+            ImgurImageApi imgurImageApi = new ImgurImageApi();
+            imgurImageApi.uploadImage(new RestCallback<Image>() {
                 @Override
                 public void onResponse(Image response) {
                     //save response

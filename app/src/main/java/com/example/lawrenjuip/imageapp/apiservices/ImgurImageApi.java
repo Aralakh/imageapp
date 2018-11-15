@@ -3,6 +3,7 @@ package com.example.lawrenjuip.imageapp.apiservices;
 import android.util.Log;
 
 import com.example.lawrenjuip.imageapp.models.Image;
+import com.example.lawrenjuip.imageapp.presenters.SingleImagePresenter;
 
 import java.io.File;
 
@@ -15,9 +16,10 @@ import retrofit2.Response;
 
 import static com.example.lawrenjuip.imageapp.utils.Constants.CLIENT_ID;
 
-public class ImageApi {
+public class ImgurImageApi implements SingleImagePresenter.ImageApi {
     ImageRestClient imageRestClient = ImgurService.getRetrofit(ImageRestClient.class);
 
+    @Override
     public void deleteImage(final RestCallback<ResponseBody> callback, String deleteImageHash){
         try{
             imageRestClient.deleteImage("Client-ID " + CLIENT_ID, deleteImageHash).enqueue(new Callback<ResponseBody>() {
