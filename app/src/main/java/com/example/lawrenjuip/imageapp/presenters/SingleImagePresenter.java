@@ -1,6 +1,5 @@
 package com.example.lawrenjuip.imageapp.presenters;
 
-import com.example.lawrenjuip.imageapp.apiservices.ImgurImageApi;
 import com.example.lawrenjuip.imageapp.apiservices.RestCallback;
 import com.example.lawrenjuip.imageapp.models.SavedImage;
 
@@ -10,7 +9,7 @@ import java.util.List;
 import okhttp3.ResponseBody;
 
 public class SingleImagePresenter {
-    private SingleImageView singleImageView;
+   private SingleImageView singleImageView;
 
     public SingleImagePresenter(SingleImageView singleImageView){
         this.singleImageView = singleImageView;
@@ -34,18 +33,17 @@ public class SingleImagePresenter {
             @Override
             public void onError() {
                 //let them know it failed
-                int debug = 6;
             }
         }, savedImage.getDeleteHash());
     }
 
     public interface ImageStorage {
-        public List<SavedImage> loadImages();
-        public void saveImages(List<SavedImage> imagesToSave);
+        List<SavedImage> loadImages();
+        void saveImages(List<SavedImage> imagesToSave);
     }
 
     public interface SingleImageView {
-        public void goBackOneScreen();
+        void goBackOneScreen();
     }
 
     public interface ImageApi {
