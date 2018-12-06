@@ -179,29 +179,31 @@ public class SingleImageFragment extends Fragment implements SingleImagePresente
     }
 
     private void updateImage(){
-        ImgurImageApi imgurImageApi = new ImgurImageApi();
-        imgurImageApi.updateImage(new RestCallback<ResponseBody>() {
-            @Override
-            public void onResponse(ResponseBody response) {
-                SharedPreferences preferences = getActivity().getPreferences(getContext().MODE_PRIVATE);
-                List<SavedImage> saveImagesList =  FileUtils.loadExistingImages(preferences);
-                List<SavedImage> updatedList = new ArrayList<>();
-                for(int i = 0; i < saveImagesList.size(); i++){
-                    if(saveImagesList.get(i).equals(savedImage)){
-                        updatedList.add(savedImage);
-                    }else{
-                        updatedList.add(saveImagesList.get(i));
-                    }
-                }
-                FileUtils.saveImages(updatedList, preferences);
-                Toast.makeText(getActivity(), getString(R.string.update_successful), Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onError() {
-
-            }
-        }, savedImage.getDeleteHash(), savedImage.getTitle());
+//        ImgurImageApi imgurImageApi = new ImgurImageApi();
+//        imgurImageApi.updateImage(new RestCallback<ResponseBody>() {
+//            @Override
+//            public void onResponse(ResponseBody response) {
+//                SharedPreferences preferences = getActivity().getPreferences(getContext().MODE_PRIVATE);
+//                List<SavedImage> saveImagesList =  FileUtils.loadExistingImages(preferences);
+//                List<SavedImage> updatedList = new ArrayList<>();
+//                for(int i = 0; i < saveImagesList.size(); i++){
+//                    if(saveImagesList.get(i).equals(savedImage)){
+//                        updatedList.add(savedImage);
+//                    }else{
+//                        updatedList.add(saveImagesList.get(i));
+//                    }
+//                }
+//                FileUtils.saveImages(updatedList, preferences);
+//                Toast.makeText(getActivity(), getString(R.string.update_successful), Toast.LENGTH_LONG).show();
+//            }
+//
+//            @Override
+//            public void onError() {
+//
+//            }
+//        }, savedImage.getDeleteHash(), savedImage.getTitle());
+        SharedPrefsImageStorage prefsImageStorage = new SharedPrefsImageStorage(getActivity());
+        singleImagePresenter.updateImage(savedImage, prefsImageStorage, new ImgurImageApi());
     }
 
     private void showDeleteConfirmationDialog(){
