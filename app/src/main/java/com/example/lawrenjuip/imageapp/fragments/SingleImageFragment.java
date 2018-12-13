@@ -110,7 +110,8 @@ public class SingleImageFragment extends Fragment implements SingleImagePresente
                 .placeholder(placeholderImage)
                 .into(imageView);
 
-        singleImagePresenter = new SingleImagePresenter(this);
+        SharedPrefsImageStorage prefsImageStorage = new SharedPrefsImageStorage(getActivity());
+        singleImagePresenter = new SingleImagePresenter(this, new ImgurImageApi(), prefsImageStorage);
 
         return view;
     }
@@ -174,8 +175,7 @@ public class SingleImageFragment extends Fragment implements SingleImagePresente
     }
 
     private void deleteImage(){
-        SharedPrefsImageStorage prefsImageStorage = new SharedPrefsImageStorage(getActivity());
-        singleImagePresenter.deleteImage(savedImage, prefsImageStorage, new ImgurImageApi());
+        singleImagePresenter.deleteImage(savedImage);
     }
 
     private void updateImage(){
@@ -202,8 +202,7 @@ public class SingleImageFragment extends Fragment implements SingleImagePresente
 //
 //            }
 //        }, savedImage.getDeleteHash(), savedImage.getTitle());
-        SharedPrefsImageStorage prefsImageStorage = new SharedPrefsImageStorage(getActivity());
-        singleImagePresenter.updateImage(savedImage, prefsImageStorage, new ImgurImageApi());
+        singleImagePresenter.updateImage(savedImage);
     }
 
     private void showDeleteConfirmationDialog(){

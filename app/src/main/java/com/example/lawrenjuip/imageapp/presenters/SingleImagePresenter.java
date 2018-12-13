@@ -1,5 +1,7 @@
 package com.example.lawrenjuip.imageapp.presenters;
 
+import android.util.Log;
+
 import com.example.lawrenjuip.imageapp.apiservices.RestCallback;
 import com.example.lawrenjuip.imageapp.models.SavedImage;
 
@@ -10,12 +12,16 @@ import okhttp3.ResponseBody;
 
 public class SingleImagePresenter {
    private SingleImageView singleImageView;
+   private ImageApi imageApi;
+   private ImageStorage imageStorage;
 
-    public SingleImagePresenter(SingleImageView singleImageView){
+    public SingleImagePresenter(SingleImageView singleImageView, ImageApi imageApi, ImageStorage imageStorage){
         this.singleImageView = singleImageView;
+        this.imageStorage = imageStorage;
+        this.imageApi = imageApi;
     }
 
-    public void deleteImage(final SavedImage savedImage, final ImageStorage imageStorage, ImageApi imageApi){
+    public void deleteImage(final SavedImage savedImage){
         imageApi.deleteImage(new RestCallback<ResponseBody>() {
             @Override
             public void onResponse(ResponseBody response) {
@@ -37,7 +43,7 @@ public class SingleImagePresenter {
         }, savedImage.getDeleteHash());
     }
 
-    public void updateImage(final SavedImage savedImage, final ImageStorage imageStorage, ImageApi imageApi){
+    public void updateImage(final SavedImage savedImage){
         imageApi.updateImage(new RestCallback<ResponseBody>() {
             @Override
             public void onResponse(ResponseBody response) {
@@ -54,9 +60,7 @@ public class SingleImagePresenter {
             }
 
             @Override
-            public void onError() {
-
-            }
+            public void onError() { }
         }, savedImage.getDeleteHash(), savedImage.getTitle());
     }
 
