@@ -11,13 +11,14 @@ import android.widget.ImageView;
 
 import com.example.lawrenjuip.imageapp.R;
 import com.example.lawrenjuip.imageapp.models.SavedImage;
+import com.example.lawrenjuip.imageapp.presenters.GalleryPresenter;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>{
+public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder> {
     private List<SavedImage> imageList;
     private Context context;
     private Drawable placeholderImage;

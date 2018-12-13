@@ -1,7 +1,5 @@
 package com.example.lawrenjuip.imageapp.presenters;
 
-import android.util.Log;
-
 import com.example.lawrenjuip.imageapp.apiservices.RestCallback;
 import com.example.lawrenjuip.imageapp.models.SavedImage;
 
@@ -62,11 +60,6 @@ public class SingleImagePresenter {
             @Override
             public void onError() { }
         }, savedImage.getDeleteHash(), savedImage.getTitle());
-    }
-
-    public interface ImageStorage {
-        List<SavedImage> loadImages();
-        void saveImages(List<SavedImage> imagesToSave);
     }
 
     public interface SingleImageView {

@@ -5,11 +5,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.example.lawrenjuip.imageapp.models.SavedImage;
-import com.example.lawrenjuip.imageapp.presenters.SingleImagePresenter;
+import com.example.lawrenjuip.imageapp.presenters.ImageStorage;
 
 import java.util.List;
 
-public class SharedPrefsImageStorage implements SingleImagePresenter.ImageStorage {
+public class SharedPrefsImageStorage implements ImageStorage {
     private SharedPreferences preferences;
 
     public SharedPrefsImageStorage(Activity activity){

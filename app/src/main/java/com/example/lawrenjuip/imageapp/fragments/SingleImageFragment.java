@@ -1,7 +1,6 @@
 package com.example.lawrenjuip.imageapp.fragments;
 
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -17,23 +16,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.lawrenjuip.imageapp.R;
-import com.example.lawrenjuip.imageapp.apiservices.ImgurImageApi;
-import com.example.lawrenjuip.imageapp.apiservices.RestCallback;
+import com.example.lawrenjuip.imageapp.apiservices.ImgurSingleImageApi;
 import com.example.lawrenjuip.imageapp.models.SavedImage;
 import com.example.lawrenjuip.imageapp.presenters.SingleImagePresenter;
-import com.example.lawrenjuip.imageapp.utils.FileUtils;
 import com.example.lawrenjuip.imageapp.utils.SharedPrefsImageStorage;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import okhttp3.ResponseBody;
 
 import static com.example.lawrenjuip.imageapp.utils.Constants.SAVED_IMAGES_KEY;
 
@@ -111,7 +103,7 @@ public class SingleImageFragment extends Fragment implements SingleImagePresente
                 .into(imageView);
 
         SharedPrefsImageStorage prefsImageStorage = new SharedPrefsImageStorage(getActivity());
-        singleImagePresenter = new SingleImagePresenter(this, new ImgurImageApi(), prefsImageStorage);
+        singleImagePresenter = new SingleImagePresenter(this, new ImgurSingleImageApi(), prefsImageStorage);
 
         return view;
     }
@@ -178,32 +170,7 @@ public class SingleImageFragment extends Fragment implements SingleImagePresente
         singleImagePresenter.deleteImage(savedImage);
     }
 
-    private void updateImage(){
-//        ImgurImageApi imgurImageApi = new ImgurImageApi();
-//        imgurImageApi.updateImage(new RestCallback<ResponseBody>() {
-//            @Override
-//            public void onResponse(ResponseBody response) {
-//                SharedPreferences preferences = getActivity().getPreferences(getContext().MODE_PRIVATE);
-//                List<SavedImage> saveImagesList =  FileUtils.loadExistingImages(preferences);
-//                List<SavedImage> updatedList = new ArrayList<>();
-//                for(int i = 0; i < saveImagesList.size(); i++){
-//                    if(saveImagesList.get(i).equals(savedImage)){
-//                        updatedList.add(savedImage);
-//                    }else{
-//                        updatedList.add(saveImagesList.get(i));
-//                    }
-//                }
-//                FileUtils.saveImages(updatedList, preferences);
-//                Toast.makeText(getActivity(), getString(R.string.update_successful), Toast.LENGTH_LONG).show();
-//            }
-//
-//            @Override
-//            public void onError() {
-//
-//            }
-//        }, savedImage.getDeleteHash(), savedImage.getTitle());
-        singleImagePresenter.updateImage(savedImage);
-    }
+    private void updateImage() { singleImagePresenter.updateImage(savedImage); }
 
     private void showDeleteConfirmationDialog(){
         AlertDialog.Builder deleteBuilder = new AlertDialog.Builder(getContext());

@@ -14,7 +14,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,22 +23,23 @@ import android.view.ViewGroup;
 
 import com.example.lawrenjuip.imageapp.R;
 import com.example.lawrenjuip.imageapp.adapters.ImageAdapter;
-import com.example.lawrenjuip.imageapp.apiservices.ImgurImageApi;
-import com.example.lawrenjuip.imageapp.apiservices.RestCallback;
-import com.example.lawrenjuip.imageapp.models.Image;
+import com.example.lawrenjuip.imageapp.apiservices.ImgurGalleryImageApi;
 import com.example.lawrenjuip.imageapp.models.SavedImage;
+import com.example.lawrenjuip.imageapp.presenters.GalleryPresenter;
 import com.example.lawrenjuip.imageapp.utils.FileUtils;
+import com.example.lawrenjuip.imageapp.utils.SharedPrefsImageStorage;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-public class GalleryFragment extends Fragment {
+public class GalleryFragment extends Fragment implements GalleryPresenter.GalleryImageView {
     private RecyclerView imageRecyclerView;
     private GridLayoutManager imageGridLayoutManager;
     private ImageAdapter imageAdapter;
     private File cameraFile;
+    private GalleryPresenter galleryPresenter;
     private static final int REQUEST_TAKE_PICTURE = 1;
 
     public static GalleryFragment newInstance() {
@@ -64,6 +64,9 @@ public class GalleryFragment extends Fragment {
         updateAdapter(FileUtils.loadExistingImages(preferences));
         imageRecyclerView.setAdapter(imageAdapter);
         imageRecyclerView.getAdapter().notifyDataSetChanged();
+
+        SharedPrefsImageStorage prefsImageStorage = new SharedPrefsImageStorage(getActivity());
+        galleryPresenter = new GalleryPresenter(this, prefsImageStorage,  new ImgurGalleryImageApi());
         return galleryView;
     }
 
@@ -103,7 +106,8 @@ public class GalleryFragment extends Fragment {
         }
     }
 
-    private void updateAdapter(List<SavedImage> imageList){
+    @Override
+    public void updateAdapter(List<SavedImage> imageList){
         if(imageAdapter == null){
             imageAdapter = new ImageAdapter(imageList, getContext(),(ImageAdapter.OnImageClickListener) getActivity());
         }else{
@@ -122,26 +126,9 @@ public class GalleryFragment extends Fragment {
                 FileUtils.createImageFileFromAssets(is, getContext());
                 imageFile = new File(getContext().getFilesDir(), "catPlaceholderImage.png");
             }
-            ImgurImageApi imgurImageApi = new ImgurImageApi();
-            imgurImageApi.uploadImage(new RestCallback<Image>() {
-                @Override
-                public void onResponse(Image response) {
-                    //save response
-                    SavedImage image = new SavedImage(response.data.getDeleteHash(), response.data.getLink());
-                    SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-                    List<SavedImage> savedImageList = FileUtils.loadExistingImages(preferences);
 
-                    savedImageList.add(image);
-                    FileUtils.saveImages(savedImageList, preferences);
-                    updateAdapter(savedImageList);
-                }
+            galleryPresenter.uploadImage(imageFile);
 
-                @Override
-                public void onError() {
-                    Log.d("OnResponse error ", "something went wrong");
-
-                }
-            }, imageFile);
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }

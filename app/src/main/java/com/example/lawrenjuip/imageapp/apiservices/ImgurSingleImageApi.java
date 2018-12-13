@@ -16,7 +16,7 @@ import retrofit2.Response;
 
 import static com.example.lawrenjuip.imageapp.utils.Constants.CLIENT_ID;
 
-public class ImgurImageApi implements SingleImagePresenter.ImageApi {
+public class ImgurSingleImageApi implements SingleImagePresenter.ImageApi {
     ImageRestClient imageRestClient = ImgurService.getRetrofit(ImageRestClient.class);
 
     @Override
@@ -60,26 +60,6 @@ public class ImgurImageApi implements SingleImagePresenter.ImageApi {
             });
         }catch(Exception e){
             Log.d("updateImage ", e.getMessage());
-        }
-    }
-
-    public void uploadImage(final RestCallback<Image> callback, File imageFile){
-        try{
-            RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), imageFile);
-            imageRestClient.uploadImage("Client-ID " + CLIENT_ID, requestFile).enqueue(new Callback<Image>() {
-                @Override
-                public void onResponse(Call<Image> call, Response<Image> response) {
-                    callback.onResponse(response.body());
-                }
-
-                @Override
-                public void onFailure(Call<Image> call, Throwable t) {
-                    callback.onError();
-                    t.printStackTrace();
-                }
-            });
-        }catch(Exception e){
-            Log.d("uploadImage ", e.getMessage());
         }
     }
 }
