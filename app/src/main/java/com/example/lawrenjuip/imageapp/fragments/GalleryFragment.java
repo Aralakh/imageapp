@@ -1,9 +1,7 @@
 package com.example.lawrenjuip.imageapp.fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.AssetManager;
@@ -40,6 +38,7 @@ public class GalleryFragment extends Fragment implements GalleryPresenter.Galler
     private ImageAdapter imageAdapter;
     private File cameraFile;
     private GalleryPresenter galleryPresenter;
+    private SharedPrefsImageStorage prefsImageStorage;
     private static final int REQUEST_TAKE_PICTURE = 1;
 
     public static GalleryFragment newInstance() {
@@ -59,13 +58,13 @@ public class GalleryFragment extends Fragment implements GalleryPresenter.Galler
         imageRecyclerView = galleryView.findViewById(R.id.image_recycler_view);
         imageGridLayoutManager = new GridLayoutManager(getActivity(), 3);
         imageRecyclerView.setLayoutManager(imageGridLayoutManager);
+        prefsImageStorage = new SharedPrefsImageStorage(getActivity());
 
-        SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-        updateAdapter(FileUtils.loadExistingImages(preferences));
+        updateAdapter(prefsImageStorage.loadImages());
+
         imageRecyclerView.setAdapter(imageAdapter);
         imageRecyclerView.getAdapter().notifyDataSetChanged();
 
-        SharedPrefsImageStorage prefsImageStorage = new SharedPrefsImageStorage(getActivity());
         galleryPresenter = new GalleryPresenter(this, prefsImageStorage,  new ImgurGalleryImageApi());
         return galleryView;
     }
@@ -90,11 +89,11 @@ public class GalleryFragment extends Fragment implements GalleryPresenter.Galler
     @Override
     public void onResume(){
         super.onResume();
-        SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-        updateAdapter(FileUtils.loadExistingImages(preferences));
+        updateAdapter(prefsImageStorage.loadImages());
     }
 
-    @Override public void onActivityResult(int requestCode, int resultCode, Intent data){
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
         if(resultCode != Activity.RESULT_OK){
             return;
         }
@@ -106,7 +105,6 @@ public class GalleryFragment extends Fragment implements GalleryPresenter.Galler
         }
     }
 
-    @Override
     public void updateAdapter(List<SavedImage> imageList){
         if(imageAdapter == null){
             imageAdapter = new ImageAdapter(imageList, getContext(),(ImageAdapter.OnImageClickListener) getActivity());
