@@ -2,6 +2,7 @@ package com.example.lawrenjuip.imageapp.presenters;
 
 import com.example.lawrenjuip.imageapp.apiservices.RestCallback;
 import com.example.lawrenjuip.imageapp.models.SavedImage;
+import com.example.lawrenjuip.imageapp.utils.SharedPrefsImageStorage;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,14 +20,14 @@ import static org.mockito.Mockito.verify;
 
 public class SingleImagePresenterTest {
      SingleImagePresenter.SingleImageView imageView;
-     SingleImagePresenter.ImageStorage imageStorage;
+     SharedPrefsImageStorage imageStorage;
      SingleImagePresenter.ImageApi imageApi;
      SingleImagePresenter imagePresenter;
 
     @Before
     public void setUp(){
         imageView = mock(SingleImagePresenter.SingleImageView.class);
-        imageStorage = mock(SingleImagePresenter.ImageStorage.class);
+        imageStorage = mock(SharedPrefsImageStorage.class);
         imageApi = mock(SingleImagePresenter.ImageApi.class);
         imagePresenter = new SingleImagePresenter(imageView, imageApi, imageStorage);
     }
