@@ -11,7 +11,6 @@ import android.widget.ImageView;
 
 import com.example.lawrenjuip.imageapp.R;
 import com.example.lawrenjuip.imageapp.models.SavedImage;
-import com.example.lawrenjuip.imageapp.presenters.GalleryPresenter;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;

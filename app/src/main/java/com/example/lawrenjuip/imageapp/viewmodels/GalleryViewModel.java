@@ -9,12 +9,10 @@ import io.reactivex.Observable;
 
 public class GalleryViewModel {
     public Observable<String> screenTitle = Observable.just("NewTitle");
-    public List<SavedImage> savedImageList;
-    private ImageStorage imageStorage;
+    public Observable<List<SavedImage>> savedImageList;
 
     public GalleryViewModel(ImageStorage imageStorage){
-        this.imageStorage = imageStorage;
-        savedImageList = imageStorage.loadImages();
+        savedImageList = Observable.just(imageStorage.loadImages());
     }
 
 }

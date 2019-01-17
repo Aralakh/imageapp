@@ -26,5 +26,6 @@ public class SharedPrefsImageStorage implements ImageStorage {
     @Override
     public void saveImages(List<SavedImage> imagesToSave) {
         FileUtils.saveImages(imagesToSave, preferences);
+
     }
 }

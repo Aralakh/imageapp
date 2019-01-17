@@ -24,9 +24,9 @@ import android.view.ViewGroup;
 
 import com.example.lawrenjuip.imageapp.R;
 import com.example.lawrenjuip.imageapp.adapters.ImageAdapter;
-import com.example.lawrenjuip.imageapp.apiservices.ImgurGalleryImageApi;
 import com.example.lawrenjuip.imageapp.models.SavedImage;
 import com.example.lawrenjuip.imageapp.presenters.GalleryPresenter;
+import com.example.lawrenjuip.imageapp.utils.BaseObserver;
 import com.example.lawrenjuip.imageapp.utils.FileUtils;
 import com.example.lawrenjuip.imageapp.utils.SharedPrefsImageStorage;
 import com.example.lawrenjuip.imageapp.viewmodels.GalleryViewModel;
@@ -34,11 +34,8 @@ import com.example.lawrenjuip.imageapp.viewmodels.GalleryViewModel;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
-
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
 
 public class GalleryFragment extends Fragment implements GalleryPresenter.GalleryImageView {
     private RecyclerView imageRecyclerView;
@@ -66,9 +63,8 @@ public class GalleryFragment extends Fragment implements GalleryPresenter.Galler
         imageGridLayoutManager = new GridLayoutManager(getActivity(), 3);
         imageRecyclerView.setLayoutManager(imageGridLayoutManager);
 
-        //refactor this to be in gallery presenter
         galleryViewModel = new GalleryViewModel(new SharedPrefsImageStorage(getActivity()));
-        imageAdapter = new ImageAdapter(galleryViewModel.savedImageList, getContext(),(ImageAdapter.OnImageClickListener) getActivity());
+        imageAdapter = new ImageAdapter(new ArrayList<SavedImage>(), getContext(),(ImageAdapter.OnImageClickListener) getActivity());
 
         imageRecyclerView.setAdapter(imageAdapter);
         imageRecyclerView.getAdapter().notifyDataSetChanged();
@@ -78,28 +74,19 @@ public class GalleryFragment extends Fragment implements GalleryPresenter.Galler
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        galleryViewModel.screenTitle.subscribe(new Observer<String>() {
+        galleryViewModel.screenTitle.subscribe(new BaseObserver<String>(){
             @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
-            @Override
-            public void onNext(String s) {
+            public void onNext(String s){
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(s);
             }
+        });
 
+        galleryViewModel.savedImageList.subscribe(new BaseObserver<List<SavedImage>>(){
             @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onComplete() {
-
+            public void onNext(List<SavedImage> savedImages) {
+                updateAdapter(savedImages);
             }
         });
-        updateAdapter(galleryViewModel.savedImageList);
     }
 
     @Override
@@ -122,7 +109,14 @@ public class GalleryFragment extends Fragment implements GalleryPresenter.Galler
     @Override
     public void onResume(){
         super.onResume();
-        updateAdapter(galleryViewModel.savedImageList);
+
+        //is this subscription necessary?
+        galleryViewModel.savedImageList.subscribe(new BaseObserver<List<SavedImage>>(){
+            @Override
+            public void onNext(List<SavedImage> savedImages) {
+                updateAdapter(savedImages);
+            }
+        });
     }
 
     @Override
