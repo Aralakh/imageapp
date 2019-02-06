@@ -24,12 +24,15 @@ import android.view.ViewGroup;
 
 import com.example.lawrenjuip.imageapp.R;
 import com.example.lawrenjuip.imageapp.adapters.ImageAdapter;
+import com.example.lawrenjuip.imageapp.apiservices.ImgurGalleryImageApi;
 import com.example.lawrenjuip.imageapp.models.SavedImage;
 import com.example.lawrenjuip.imageapp.presenters.GalleryPresenter;
 import com.example.lawrenjuip.imageapp.utils.BaseObserver;
 import com.example.lawrenjuip.imageapp.utils.FileUtils;
 import com.example.lawrenjuip.imageapp.utils.SharedPrefsImageStorage;
 import com.example.lawrenjuip.imageapp.viewmodels.GalleryViewModel;
+import com.example.lawrenjuip.imageapp.views.GalleryImageView;
+import com.example.lawrenjuip.imageapp.views.ImageUploadApi;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +40,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GalleryFragment extends Fragment implements GalleryPresenter.GalleryImageView {
+public class GalleryFragment extends Fragment implements GalleryImageView {
     private RecyclerView imageRecyclerView;
     private GridLayoutManager imageGridLayoutManager;
     private ImageAdapter imageAdapter;
@@ -63,7 +66,7 @@ public class GalleryFragment extends Fragment implements GalleryPresenter.Galler
         imageGridLayoutManager = new GridLayoutManager(getActivity(), 3);
         imageRecyclerView.setLayoutManager(imageGridLayoutManager);
 
-        galleryViewModel = new GalleryViewModel(new SharedPrefsImageStorage(getActivity()));
+        galleryViewModel = new GalleryViewModel(new SharedPrefsImageStorage(getActivity()), new ImgurGalleryImageApi());
         imageAdapter = new ImageAdapter(new ArrayList<SavedImage>(), getContext(),(ImageAdapter.OnImageClickListener) getActivity());
 
         imageRecyclerView.setAdapter(imageAdapter);
@@ -147,6 +150,7 @@ public class GalleryFragment extends Fragment implements GalleryPresenter.Galler
                 FileUtils.createImageFileFromAssets(is, getContext());
                 imageFile = new File(getContext().getFilesDir(), "catPlaceholderImage.png");
             }
+            galleryViewModel.uploadImage(imageFile);
 
         } catch (IOException ioe) {
             ioe.printStackTrace();

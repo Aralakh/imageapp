@@ -9,12 +9,17 @@ import com.example.lawrenjuip.imageapp.presenters.ImageStorage;
 
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
+
 public class SharedPrefsImageStorage implements ImageStorage {
     private SharedPreferences preferences;
+    private BehaviorSubject<List<SavedImage>> imageSubject = BehaviorSubject.create();
 
     public SharedPrefsImageStorage(Activity activity){
 
         preferences = activity.getPreferences(Context.MODE_PRIVATE);
+        imageSubject.onNext(loadImages());
     }
 
     @Override
@@ -26,6 +31,12 @@ public class SharedPrefsImageStorage implements ImageStorage {
     @Override
     public void saveImages(List<SavedImage> imagesToSave) {
         FileUtils.saveImages(imagesToSave, preferences);
+        imageSubject.onNext(imagesToSave);
+    }
 
+    @Override
+    public Observable<List<SavedImage>> images(){
+
+        return imageSubject;
     }
 }

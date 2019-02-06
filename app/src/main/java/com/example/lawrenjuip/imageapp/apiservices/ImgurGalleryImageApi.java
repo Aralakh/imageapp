@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.lawrenjuip.imageapp.models.Image;
 import com.example.lawrenjuip.imageapp.presenters.GalleryPresenter;
+import com.example.lawrenjuip.imageapp.views.ImageUploadApi;
 
 import java.io.File;
 
@@ -15,7 +16,7 @@ import retrofit2.Response;
 
 import static com.example.lawrenjuip.imageapp.utils.Constants.CLIENT_ID;
 
-public class ImgurGalleryImageApi implements GalleryPresenter.ImageApi {
+public class ImgurGalleryImageApi implements ImageUploadApi {
     ImageRestClient imageRestClient = ImgurService.getRetrofit(ImageRestClient.class);
 
     public void uploadImage(final RestCallback<Image> callback, File imageFile){

@@ -3,16 +3,18 @@ package com.example.lawrenjuip.imageapp.presenters;
 import com.example.lawrenjuip.imageapp.apiservices.RestCallback;
 import com.example.lawrenjuip.imageapp.models.Image;
 import com.example.lawrenjuip.imageapp.models.SavedImage;
+import com.example.lawrenjuip.imageapp.views.GalleryImageView;
+import com.example.lawrenjuip.imageapp.views.ImageUploadApi;
 
 import java.io.File;
 import java.util.List;
 
 public class GalleryPresenter {
     private ImageStorage imageStorage;
-    private ImageApi imageApi;
+    private ImageUploadApi imageApi;
     private GalleryImageView galleryImageView;
 
-    public GalleryPresenter(GalleryImageView galleryImageView, ImageStorage imageStorage, ImageApi imageApi){
+    public GalleryPresenter(GalleryImageView galleryImageView, ImageStorage imageStorage, ImageUploadApi imageApi){
         this.galleryImageView = galleryImageView;
         this.imageStorage = imageStorage;
         this.imageApi = imageApi;
@@ -35,13 +37,5 @@ public class GalleryPresenter {
 
             }
         }, imageFile);
-    }
-
-    public interface ImageApi {
-        void uploadImage(RestCallback<Image> callback, File imageFile);
-    }
-
-    public interface GalleryImageView {
-        void updateAdapter(List<SavedImage> savedImageList);
     }
 }
