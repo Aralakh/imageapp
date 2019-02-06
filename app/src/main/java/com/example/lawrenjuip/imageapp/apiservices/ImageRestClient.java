@@ -2,6 +2,7 @@ package com.example.lawrenjuip.imageapp.apiservices;
 
 import com.example.lawrenjuip.imageapp.models.Image;
 
+import io.reactivex.Observable;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -16,7 +17,7 @@ import retrofit2.http.Path;
 
 interface ImageRestClient {
     @POST("image/{image}/")
-    Call<Image> uploadImage(@Header("Authorization") String auth, @Body RequestBody file);
+    Observable<Image> uploadImage(@Header("Authorization") String auth, @Body RequestBody file);
 
     @DELETE("image/{imageDeleteHash}")
     Call<ResponseBody> deleteImage(@Header("Authorization") String auth, @Path("imageDeleteHash") String imageDeleteHash);

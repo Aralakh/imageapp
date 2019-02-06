@@ -1,19 +1,17 @@
 package com.example.lawrenjuip.imageapp.viewmodels;
 
-import android.util.Log;
-
-import com.example.lawrenjuip.imageapp.apiservices.RestCallback;
 import com.example.lawrenjuip.imageapp.models.Image;
 import com.example.lawrenjuip.imageapp.models.SavedImage;
-import com.example.lawrenjuip.imageapp.presenters.GalleryPresenter;
 import com.example.lawrenjuip.imageapp.presenters.ImageStorage;
-import com.example.lawrenjuip.imageapp.views.GalleryImageView;
+import com.example.lawrenjuip.imageapp.utils.BaseObserver;
 import com.example.lawrenjuip.imageapp.views.ImageUploadApi;
 
 import java.io.File;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class GalleryViewModel {
     private ImageStorage imageStorage;
@@ -28,20 +26,18 @@ public class GalleryViewModel {
     }
 
     public void uploadImage(File imageFile){
-        imageApi.uploadImage(new RestCallback<Image>() {
-            @Override
-            public void onResponse(Image response) {
-                SavedImage image = new SavedImage(response.data.getDeleteHash(), response.data.getLink());
-                List<SavedImage> savedImageList = imageStorage.loadImages();
+        imageApi.uploadImage(imageFile).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new BaseObserver<Image>(){
+                     @Override
+                     public void onNext(Image image) {
+                         SavedImage savedImage = new SavedImage(image.data.getDeleteHash(), image.data.getLink());
+                        List<SavedImage> savedImageList = imageStorage.loadImages();
 
-                savedImageList.add(image);
-                imageStorage.saveImages(savedImageList);
-            }
-
-            @Override
-            public void onError() {
-                Log.d("Upload image", "Upload failed");
-            }
-        }, imageFile);
+                        savedImageList.add(savedImage);
+                        imageStorage.saveImages(savedImageList);
+                     }
+                 }
+        );
     }
 }

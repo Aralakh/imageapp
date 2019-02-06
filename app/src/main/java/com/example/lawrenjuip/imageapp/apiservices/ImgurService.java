@@ -9,6 +9,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
 public class ImgurService {
@@ -31,8 +32,9 @@ public class ImgurService {
             }
         });
 
-        retrofit.newBuilder()
+        retrofit = retrofit.newBuilder()
                 .client(okHttpClient.build())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
         return retrofit.create(serviceClass);
     }
