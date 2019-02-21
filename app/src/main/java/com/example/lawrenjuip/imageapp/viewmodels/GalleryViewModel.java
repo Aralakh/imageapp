@@ -1,5 +1,6 @@
 package com.example.lawrenjuip.imageapp.viewmodels;
 
+import com.example.lawrenjuip.imageapp.adapters.ImageAdapter;
 import com.example.lawrenjuip.imageapp.models.Image;
 import com.example.lawrenjuip.imageapp.models.SavedImage;
 import com.example.lawrenjuip.imageapp.presenters.ImageStorage;
@@ -16,13 +17,23 @@ import io.reactivex.schedulers.Schedulers;
 public class GalleryViewModel {
     private ImageStorage imageStorage;
     private ImageUploadApi imageApi;
+    private ImageAdapter imageAdapter;
     public Observable<String> screenTitle = Observable.just("NewTitle");
     public Observable<List<SavedImage>> savedImageList;
 
-    public GalleryViewModel(ImageStorage imageStorage, ImageUploadApi imageApi){
+    public GalleryViewModel(ImageStorage imageStorage, ImageUploadApi imageApi, ImageAdapter imageAdapter){
         this.imageStorage = imageStorage;
         this.imageApi = imageApi;
+        this.imageAdapter = imageAdapter;
         savedImageList = imageStorage.images();
+        savedImageList.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new BaseObserver<List<SavedImage>>(){
+                    @Override
+                    public void onNext(List<SavedImage> savedImages){
+                        updateAdapter(savedImages);
+                    }
+                });
     }
 
     public void uploadImage(File imageFile){
@@ -40,5 +51,12 @@ public class GalleryViewModel {
                     }
                 }
         );
+    }
+
+    public void updateAdapter(List<SavedImage> savedImageList){
+        if(savedImageList != null) {
+            imageAdapter.addAll(savedImageList);
+            imageAdapter.notifyDataSetChanged();
+        }
     }
 }

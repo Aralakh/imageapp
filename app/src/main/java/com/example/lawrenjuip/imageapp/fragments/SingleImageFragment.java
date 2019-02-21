@@ -22,6 +22,7 @@ import com.example.lawrenjuip.imageapp.apiservices.ImgurSingleImageApi;
 import com.example.lawrenjuip.imageapp.models.SavedImage;
 import com.example.lawrenjuip.imageapp.presenters.SingleImagePresenter;
 import com.example.lawrenjuip.imageapp.utils.SharedPrefsImageStorage;
+import com.example.lawrenjuip.imageapp.viewmodels.SingleImageViewModel;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -29,7 +30,7 @@ import java.io.InputStream;
 
 import static com.example.lawrenjuip.imageapp.utils.Constants.SAVED_IMAGES_KEY;
 
-public class SingleImageFragment extends Fragment implements SingleImagePresenter.SingleImageView {
+public class SingleImageFragment extends Fragment {
     private SavedImage savedImage;
     private Drawable placeholderImage;
     private TextView name;
@@ -37,8 +38,7 @@ public class SingleImageFragment extends Fragment implements SingleImagePresente
     private Button submitButton;
     private Button cancelButton;
     private boolean isEditMode = false;
-//    private SingleImagePresenter singleImagePresenter;
-
+    private SingleImageViewModel singleImageViewModel;
 
     public static SingleImageFragment newInstance(SavedImage image){
         SingleImageFragment fragment = new SingleImageFragment();
@@ -62,7 +62,6 @@ public class SingleImageFragment extends Fragment implements SingleImagePresente
         if(bundle != null){
             savedImage = bundle.getParcelable(SAVED_IMAGES_KEY);
         }
-
         View view = inflater.inflate(R.layout.fragment_single_image, container, false);
         ImageView imageView = view.findViewById(R.id.beautifulImage);
         editName = view.findViewById(R.id.editName);
@@ -103,8 +102,8 @@ public class SingleImageFragment extends Fragment implements SingleImagePresente
                 .placeholder(placeholderImage)
                 .into(imageView);
 
-        SharedPrefsImageStorage prefsImageStorage = new SharedPrefsImageStorage(getActivity());
-        singleImagePresenter = new SingleImagePresenter(this, new ImgurSingleImageApi(), prefsImageStorage);
+        singleImageViewModel = new SingleImageViewModel(new SharedPrefsImageStorage(getActivity()),
+                new ImgurSingleImageApi());
 
         return view;
     }
@@ -168,10 +167,10 @@ public class SingleImageFragment extends Fragment implements SingleImagePresente
     }
 
     private void deleteImage(){
-        singleImagePresenter.deleteImage(savedImage);
+        singleImageViewModel.deleteImage(savedImage);
     }
 
-    private void updateImage() { singleImagePresenter.updateImage(savedImage); }
+    private void updateImage() { singleImageViewModel.updateImage(savedImage); }
 
     private void showDeleteConfirmationDialog(){
         AlertDialog.Builder deleteBuilder = new AlertDialog.Builder(getContext());
@@ -181,6 +180,7 @@ public class SingleImageFragment extends Fragment implements SingleImagePresente
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         deleteImage();
+                        goBackOneScreen();
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -193,7 +193,6 @@ public class SingleImageFragment extends Fragment implements SingleImagePresente
         deleteDialog.show();
     }
 
-    @Override
     public void goBackOneScreen() {
         getActivity().getSupportFragmentManager().popBackStack();
     }

@@ -30,7 +30,6 @@ import com.example.lawrenjuip.imageapp.utils.BaseObserver;
 import com.example.lawrenjuip.imageapp.utils.FileUtils;
 import com.example.lawrenjuip.imageapp.utils.SharedPrefsImageStorage;
 import com.example.lawrenjuip.imageapp.viewmodels.GalleryViewModel;
-import com.example.lawrenjuip.imageapp.views.GalleryImageView;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +37,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GalleryFragment extends Fragment implements GalleryImageView {
+public class GalleryFragment extends Fragment {
     private RecyclerView imageRecyclerView;
     private GridLayoutManager imageGridLayoutManager;
     private ImageAdapter imageAdapter;
@@ -64,8 +63,8 @@ public class GalleryFragment extends Fragment implements GalleryImageView {
         imageGridLayoutManager = new GridLayoutManager(getActivity(), 3);
         imageRecyclerView.setLayoutManager(imageGridLayoutManager);
 
-        galleryViewModel = new GalleryViewModel(new SharedPrefsImageStorage(getActivity()), new ImgurGalleryImageApi());
         imageAdapter = new ImageAdapter(new ArrayList<SavedImage>(), getContext(),(ImageAdapter.OnImageClickListener) getActivity());
+        galleryViewModel = new GalleryViewModel(new SharedPrefsImageStorage(getActivity()), new ImgurGalleryImageApi(), imageAdapter);
 
         imageRecyclerView.setAdapter(imageAdapter);
         imageRecyclerView.getAdapter().notifyDataSetChanged();
@@ -79,13 +78,6 @@ public class GalleryFragment extends Fragment implements GalleryImageView {
             @Override
             public void onNext(String s){
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(s);
-            }
-        });
-
-        galleryViewModel.savedImageList.subscribe(new BaseObserver<List<SavedImage>>(){
-            @Override
-            public void onNext(List<SavedImage> savedImages) {
-                updateAdapter(savedImages);
             }
         });
     }
@@ -108,19 +100,6 @@ public class GalleryFragment extends Fragment implements GalleryImageView {
     }
 
     @Override
-    public void onResume(){
-        super.onResume();
-
-        //is this subscription necessary?
-        galleryViewModel.savedImageList.subscribe(new BaseObserver<List<SavedImage>>(){
-            @Override
-            public void onNext(List<SavedImage> savedImages) {
-                updateAdapter(savedImages);
-            }
-        });
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         if(resultCode != Activity.RESULT_OK){
             return;
@@ -131,11 +110,6 @@ public class GalleryFragment extends Fragment implements GalleryImageView {
             //should we delete the file after it's uploaded, to clear space?
             getActivity().revokeUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         }
-    }
-
-    public void updateAdapter(List<SavedImage> imageList){
-        imageAdapter.addAll(imageList);
-        imageAdapter.notifyDataSetChanged();
     }
 
     private void uploadImage(File file){
