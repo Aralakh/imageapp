@@ -1,12 +1,9 @@
 package com.example.lawrenjuip.imageapp.presenters;
 
-import com.example.lawrenjuip.imageapp.models.Image;
-import com.example.lawrenjuip.imageapp.models.SavedImage;
 import com.example.lawrenjuip.imageapp.views.GalleryImageView;
 import com.example.lawrenjuip.imageapp.views.ImageUploadApi;
 
 import java.io.File;
-import java.util.List;
 
 public class GalleryPresenter {
     private ImageStorage imageStorage;

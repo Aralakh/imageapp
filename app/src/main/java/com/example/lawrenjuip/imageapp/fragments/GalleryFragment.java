@@ -128,7 +128,7 @@ public class GalleryFragment extends Fragment implements GalleryImageView {
         if(requestCode == REQUEST_TAKE_PICTURE){
             Uri uri = FileProvider.getUriForFile(getActivity(), "com.example.lawrenjuip.imageapp.fileprovider", cameraFile);
             uploadImage(cameraFile);
-            //should we delete the file after it's uploaded, to clear space? add to trello backlog
+            //should we delete the file after it's uploaded, to clear space?
             getActivity().revokeUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         }
     }

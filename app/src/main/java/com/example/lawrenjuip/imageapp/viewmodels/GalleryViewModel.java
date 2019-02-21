@@ -26,18 +26,19 @@ public class GalleryViewModel {
     }
 
     public void uploadImage(File imageFile){
-        imageApi.uploadImage(imageFile).subscribeOn(Schedulers.io())
+        imageApi.uploadImage(imageFile)
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new BaseObserver<Image>(){
-                     @Override
-                     public void onNext(Image image) {
-                         SavedImage savedImage = new SavedImage(image.data.getDeleteHash(), image.data.getLink());
+                .subscribe(new BaseObserver<Image>() {
+                    @Override
+                    public void onNext(Image image) {
+                        SavedImage savedImage = new SavedImage(image.data.getDeleteHash(), image.data.getLink());
                         List<SavedImage> savedImageList = imageStorage.loadImages();
 
                         savedImageList.add(savedImage);
                         imageStorage.saveImages(savedImageList);
-                     }
-                 }
+                    }
+                }
         );
     }
 }

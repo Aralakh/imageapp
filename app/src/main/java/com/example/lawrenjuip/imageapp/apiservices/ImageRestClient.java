@@ -6,6 +6,7 @@ import io.reactivex.Observable;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
@@ -20,12 +21,12 @@ interface ImageRestClient {
     Observable<Image> uploadImage(@Header("Authorization") String auth, @Body RequestBody file);
 
     @DELETE("image/{imageDeleteHash}")
-    Call<ResponseBody> deleteImage(@Header("Authorization") String auth, @Path("imageDeleteHash") String imageDeleteHash);
+    Observable<Response<ResponseBody>> deleteImage(@Header("Authorization") String auth, @Path("imageDeleteHash") String imageDeleteHash);
 
     @GET("image/{imageHash}")
-    Call<Image> getImage(@Path("imageHash") String imageHash);
+    Observable<Image> getImage(@Path("imageHash") String imageHash);
 
     @Multipart
     @POST("image/{imageDeleteHash}")
-    Call<ResponseBody> updateImage(@Header("Authorization") String auth, @Path("imageDeleteHash") String imageDeleteHash, @Part("title") RequestBody title);
+    Observable<Response<ResponseBody>> updateImage(@Header("Authorization") String auth, @Path("imageDeleteHash") String imageDeleteHash, @Part("title") RequestBody title);
 }

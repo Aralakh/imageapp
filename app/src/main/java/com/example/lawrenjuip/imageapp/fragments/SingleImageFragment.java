@@ -37,7 +37,8 @@ public class SingleImageFragment extends Fragment implements SingleImagePresente
     private Button submitButton;
     private Button cancelButton;
     private boolean isEditMode = false;
-    private SingleImagePresenter singleImagePresenter;
+//    private SingleImagePresenter singleImagePresenter;
+
 
     public static SingleImageFragment newInstance(SavedImage image){
         SingleImageFragment fragment = new SingleImageFragment();
